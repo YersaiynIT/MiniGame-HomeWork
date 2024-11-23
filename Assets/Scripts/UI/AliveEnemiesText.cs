@@ -7,7 +7,13 @@ public class AliveEnemiesText : MonoBehaviour
 {
     [SerializeField] private TMP_Text _aliveEnemiesUI;
 
+    private EnemyList _enemies;
     private int _aliveEnemies;
+
+    public void Initalize(EnemyList enemies)
+    {
+        _enemies = enemies;
+    }
 
     private void Awake()
     {
@@ -21,7 +27,7 @@ public class AliveEnemiesText : MonoBehaviour
 
     private void Update()
     {
-        _aliveEnemies = EnemyArchive.GetEnemies().Count;
+        _aliveEnemies = _enemies.GetEnemies().Count;
 
         _aliveEnemiesUI.text = "AliveEnemies: " + _aliveEnemies.ToString();
     }

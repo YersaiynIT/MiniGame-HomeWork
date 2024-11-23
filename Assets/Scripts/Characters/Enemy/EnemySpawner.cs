@@ -6,14 +6,17 @@ public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private List<Transform> _spawnPoints;
     [SerializeField] private Enemy _enemyPrefab;
-    [SerializeField] private float _timeBetweenSpawns;
+    private float _timeBetweenSpawns = 2;
 
+    private EnemyList _enemies;
     private Coroutine _spawnCoroutine;
 
     private bool _isStopped;
 
-    public void Initialize()
+    public void Initialize(EnemyList enemies)
     {
+        _enemies = enemies;
+
         GlobalEventManager.EnemyKilled += OnEnemyKilled;
     }
 
@@ -30,9 +33,10 @@ public class EnemySpawner : MonoBehaviour
     {
         GlobalEventManager.EnemyKilled -= OnEnemyKilled;
     }
+
     private void OnEnemyKilled(Enemy killedEnemy)
     {
-        EnemyArchive.RemoveEnemy(killedEnemy);
+        _enemies.RemoveEnemy(killedEnemy);
     }
 
     private IEnumerator SpawnEnemy()
@@ -57,7 +61,7 @@ public class EnemySpawner : MonoBehaviour
             new RandomMoveComponent(enemy.transform, enemy.Speed, enemy.RotationSpeed, enemy.TimeToSwitchDirection),
             new Health(30));
 
-        EnemyArchive.AddEnemy(enemy);
+        _enemies.AddEnemy(enemy);
     }
 
     private Vector3 GetRandomSpawnPoint()
@@ -71,7 +75,7 @@ public class EnemySpawner : MonoBehaviour
 
     public void StopAllEnemies()
     {
-        List<Enemy> enemies = EnemyArchive.GetEnemies();
+        List<Enemy> enemies = _enemies.GetEnemies();
         enemies.ForEach(enemy => enemy.Stop());
     }
     

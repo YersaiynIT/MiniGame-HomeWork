@@ -6,16 +6,13 @@ public class Bootstrap : MonoBehaviour
     [SerializeField] private SimpleShooter _simpleShooterPrefab;
 
     [SerializeField] private EnemySpawner _enemySpawner;
+    [SerializeField] private AliveEnemiesText _aliveEnemiesTextUI;
 
     [SerializeField] private CameraManager _cameraManager;
     [SerializeField] private GameController _gameController;
 
     [SerializeField] private WinConditionType _winConditionType;
-    [SerializeField] private int _timeToSurvive;
-    [SerializeField] private int _enemiesToKill;
-
     [SerializeField] private LoseConditionType _loseConditionType;
-    [SerializeField] private int _maxCountEnemies;
 
 
     private void Awake()
@@ -36,42 +33,27 @@ public class Bootstrap : MonoBehaviour
 
         _cameraManager.Initialize(character.transform);
 
-        _enemySpawner.Initialize();
+        EnemyList enemiesList = new EnemyList();
 
-        ICondition winCondition = GetWinCondition(_winConditionType);
-        ICondition loseCondition = GetLoseCondition(_loseConditionType);
+        _enemySpawner.Initialize(enemiesList);
+        _aliveEnemiesTextUI.Initalize(enemiesList);
 
-        _gameController.Initialize(winCondition, loseCondition, _enemySpawner);
+        ConditionFactory conditionFactory = new ConditionFactory(_winConditionType, _loseConditionType, enemiesList);
+
+        ICondition winCondition = conditionFactory.CreateWinCondition();
+        ICondition loseCondition = conditionFactory.CreateLoseCondition();
+
+        _gameController = new GameController(winCondition, loseCondition, _enemySpawner);
+
     }
 
-    private ICondition GetWinCondition(WinConditionType winConditionType)
+    private void Start()
     {
-        switch (winConditionType)
-        {
-            case WinConditionType.SurviveForTime:
-                return new SurviveForTimeCondition(_timeToSurvive);
-
-            case WinConditionType.KillEnemies:
-                return new KillEnemiesCondition(_enemiesToKill);
-
-            default:
-                return null;
-        }
+        _gameController.Start();
     }
 
-    private ICondition GetLoseCondition(LoseConditionType loseConditionType)
+    private void Update()
     {
-        switch (loseConditionType)
-        {
-            case LoseConditionType.CharacterDied:
-                return new CharacterDiedCondition();
-
-            case LoseConditionType.TooManyEnemies:
-                return new TooManyEnemiesCondition(_maxCountEnemies);
-
-            default:
-                return null;
-        }
+        _gameController.Update();
     }
-
 }

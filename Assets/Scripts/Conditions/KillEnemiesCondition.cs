@@ -10,24 +10,25 @@ public class KillEnemiesCondition : ICondition
     public KillEnemiesCondition(int enemiesToKill)
     {
         _enemiesToKill = enemiesToKill;
+
+        Enable();
+    }
+
+    public void Update()
+    {
+        if (_enemiesKilled >= _enemiesToKill)
+            Completed?.Invoke();
+    }
+
+    public void OnEnemyKilled(Enemy enemy) => _enemiesKilled++;
+
+    public void Enable()
+    {
         GlobalEventManager.EnemyKilled += OnEnemyKilled;
     }
 
-    public void CheckCondition()
+    public void Disable()
     {
-        if (_enemiesKilled >= _enemiesToKill)
-        {
-            GlobalEventManager.EnemyKilled -= OnEnemyKilled;
-            Completed?.Invoke();
-        }
+        GlobalEventManager.EnemyKilled -= OnEnemyKilled;
     }
-
-    public void OnEnemyKilled(Enemy enemy)
-    {
-        _enemiesKilled++;
-    }
-
-
-
-
 }

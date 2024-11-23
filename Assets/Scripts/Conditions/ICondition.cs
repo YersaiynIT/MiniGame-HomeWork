@@ -3,5 +3,7 @@ using System;
 public interface ICondition
 {
     event Action Completed;
-    void CheckCondition();
+    void Update();
+    void Enable();
+    void Disable();
 }

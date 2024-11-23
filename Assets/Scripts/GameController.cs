@@ -1,13 +1,13 @@
 using UnityEngine;
 
-public class GameController : MonoBehaviour
+public class GameController
 {
     private ICondition _winCondition;
     private ICondition _loseCondition;
 
     private EnemySpawner _enemySpawner;
 
-    public void Initialize(ICondition winCondition, ICondition loseCondition, EnemySpawner enemySpawner)
+    public GameController(ICondition winCondition, ICondition loseCondition, EnemySpawner enemySpawner)
     {
         _winCondition = winCondition;
         _loseCondition = loseCondition;
@@ -15,22 +15,25 @@ public class GameController : MonoBehaviour
         _enemySpawner = enemySpawner;
     }
 
-    private void Start()
+    public void Start()
     {
         _winCondition.Completed += OnWinConditionCompleted;
         _loseCondition.Completed += OnLoseConditionCompleted;
     }
 
-    private void Update()
+    public void Update()
     {
-        _winCondition.CheckCondition();
-        _loseCondition.CheckCondition();
+        _winCondition.Update();
+        _loseCondition.Update();
     }
 
     private void EndGame(string message)
     {
         _winCondition.Completed -= OnWinConditionCompleted;
         _loseCondition.Completed -= OnLoseConditionCompleted;
+
+        _winCondition.Disable();
+        _loseCondition.Disable();
 
         _enemySpawner.Stop();
         _enemySpawner.StopAllEnemies();

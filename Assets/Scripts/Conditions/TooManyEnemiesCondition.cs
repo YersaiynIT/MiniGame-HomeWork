@@ -5,23 +5,32 @@ public class TooManyEnemiesCondition : ICondition
 {
     public event Action Completed;
 
-    private List<Enemy> _aliveEnemies = new();
+    private List<Enemy> _aliveEnemies;
     private int _countAliveEnemies;
 
     private int _maxCountEnemies;
 
-    public TooManyEnemiesCondition(int maxCountEnemies)
+    public TooManyEnemiesCondition(EnemyList enemies, int maxCountEnemies)
     {
+        _aliveEnemies = enemies.GetEnemies();
         _maxCountEnemies = maxCountEnemies;
     }
 
-    public void CheckCondition()
+    public void Update()
     {
-        _aliveEnemies = EnemyArchive.GetEnemies();
-
         _countAliveEnemies = _aliveEnemies.Count;
 
         if (_countAliveEnemies >= _maxCountEnemies)
             Completed?.Invoke();
+    }
+
+    public void Enable()
+    {
+        
+    }
+
+    public void Disable()
+    {
+        
     }
 }

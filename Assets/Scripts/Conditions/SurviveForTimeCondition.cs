@@ -14,16 +14,12 @@ public class SurviveForTimeCondition : ICondition
     {
         _timeToSurvive = timeToSurvive;
 
-        GlobalEventManager.CharacterDied += OnCharacterDied;
+        Enable();
     }
 
-    private void OnCharacterDied()
-    {
-        _isCharacterDied = true;
-        GlobalEventManager.CharacterDied -= OnCharacterDied;
-    }
+    private void OnCharacterDied() => _isCharacterDied = true;
 
-    public void CheckCondition()
+    public void Update()
     {
         if (_isCharacterDied)
             return;
@@ -35,5 +31,13 @@ public class SurviveForTimeCondition : ICondition
                 Completed?.Invoke();
     }
 
+    public void Enable()
+    {
+        GlobalEventManager.CharacterDied += OnCharacterDied;
+    }
 
+    public void Disable()
+    {
+        GlobalEventManager.CharacterDied -= OnCharacterDied;
+    }
 }
